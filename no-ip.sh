@@ -45,6 +45,10 @@ case "$SERVICE" in
         noip)
             SERVICEURL="dynupdate.no-ip.com/nic/update"
             ;;
+
+        strato)
+            SERVICEURL="dyndns.strato.com/nic/update"
+            ;;
          
         dyndns)
             SERVICEURL="members.dyndns.org/v3/update"

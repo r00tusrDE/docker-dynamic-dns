@@ -34,6 +34,10 @@ then
 	exit 35
 fi
 
+timestamp() {
+	date -u
+}
+
 USERAGENT="--user-agent=\"no-ip shell script/1.0 mail@mail.com\""
 BASE64AUTH=$(echo '"$USER:$PASSWORD"' | base64)
 AUTHHEADER="--header=\"Authorization: $BASE64AUTH\""
@@ -61,7 +65,7 @@ do
 					SERVICEURL="https://dyndns.strato.com/nic/update?hostname=$HOSTNAME\&myip=$IP"
 					echo "Updating ip on: $SERVICEURL"
 
-					RESULT=$(wget --no-check-certificate -S -nv -O "-" --http-user=$USER --http-password=$PASSWORD https://dyndns.strato.com/nic/update?hostname=$HOSTNAME&myip=$IP)
+					RESULT=$(wget -S -nv -O "-" --http-user=$USER --http-password=$PASSWORD https://dyndns.strato.com/nic/update?hostname=$HOSTNAME&myip=$IP)
 					;;
 
 				duckdns)
@@ -79,7 +83,7 @@ do
 
 	LASTIP="$IP"
 
-	echo $RESULT
+	echo "[$(timestamp)]: $RESULT"
 
 	if [ $INTERVAL -eq 0 ]
 	then

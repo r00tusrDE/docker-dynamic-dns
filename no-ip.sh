@@ -38,6 +38,10 @@ then
 	exit 35
 fi
 
+timestamp() {
+	date -u
+}
+
 USERAGENT="--user-agent=\"no-ip shell script/1.0 mail@mail.com\""
 BASE64AUTH=$(echo '"$USER:$PASSWORD"' | base64)
 AUTHHEADER="--header=\"Authorization: $BASE64AUTH\""
@@ -85,7 +89,7 @@ do
 	LASTIP="$IP"
 
 	echo "--- RESULT --------------------"
-	echo $RESULT
+	echo "[$(timestamp)]: $RESULT"
 	echo "-------------------------------"
 
 	if [ $INTERVAL -eq 0 ]

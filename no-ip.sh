@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/bash
 
 if [ -z "$USER" ]
 then
@@ -12,25 +12,21 @@ then
 	exit 20
 fi
 
-
 if [ -z "$HOSTNAME" ]
 then
 	echo "No host name. Use -h=host.example.com"
 	exit 30
 fi
 
-
 if [ -n "$DETECTIP" ]
 then
 	IP=$(wget -qO- "https://myexternalip.com/raw")
 fi
 
-
 if [ -n "$DETECTIP" ] && [ -z $IP ]
 then
 	RESULT="Could not detect external IP."
 fi
-
 
 if [[ $INTERVAL != [0-9]* ]]
 then
@@ -50,7 +46,6 @@ do
 	then
 		IP=$(wget -qO- "http://myexternalip.com/raw")
 	fi
-
 
 	if [ -n "$DETECTIP" ] && [ -z $IP ]
 	then
@@ -84,9 +79,7 @@ do
 
 	LASTIP="$IP"
 
-	echo "--- RESULT --------------------"
 	echo $RESULT
-	echo "-------------------------------"
 
 	if [ $INTERVAL -eq 0 ]
 	then

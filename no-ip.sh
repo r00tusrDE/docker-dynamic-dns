@@ -70,7 +70,7 @@ do
 					SERVICEURL="https://dyndns.strato.com/nic/update?hostname=$HOSTNAME\&myip=$IP"
 					echo "Updating ip on: $SERVICEURL"
 
-					RESULT=$(wget --no-check-certificate -S -nv -O "-" --http-user=$USER --http-password=$PASSWORD https://dyndns.strato.com/nic/update?hostname=$HOSTNAME&myip=$IP)
+					RESULT=$(wget -S -nv -O "-" --http-user=$USER --http-password=$PASSWORD https://dyndns.strato.com/nic/update?hostname=$HOSTNAME&myip=$IP)
 					;;
 
 				duckdns)

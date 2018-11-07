@@ -22,7 +22,7 @@ fi
 
 if [ -n "$DETECTIP" ]
 then
-	IP=$(wget -qO- "http://myexternalip.com/raw")
+	IP=$(wget -qO- "https://myexternalip.com/raw")
 fi
 
 

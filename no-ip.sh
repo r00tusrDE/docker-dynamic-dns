@@ -20,7 +20,7 @@ fi
 
 if [ -n "$DETECTIP" ]
 then
-	IP=$(wget -qO- "https://ip.d-pelz.de")
+	IP=$(wget -qO- "https://myexternalip.com/raw")
 fi
 
 if [ -n "$DETECTIP" ] && [ -z $IP ]
@@ -34,38 +34,45 @@ then
 	exit 35
 fi
 
+if [ ! -z "$TZ" ]
+then
+       ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+fi
+
 timestamp() {
-	date -u
+	date
 }
 
 LASTIP=""
+
+> /log/ddns.log
 
 while :
 do
 	if [ -n "$DETECTIP" ]
 	then
-		IP=$(wget -qO- "https://ip.d-pelz.de")
+		IP=$(wget -qO- "https://myexternalip.com/raw")
 	fi
 
 	if [ -n "$DETECTIP" ] && [ -z $IP ]
 	then
 		RESULT="Could not detect external IP."
+		echo "[$(timestamp)]: $RESULT" | tee -a /log/ddns.log
 	else
 		if [ "$LASTIP" != "$IP" ]; then
 			while read hostname
 			do
 				HOSTNAME="$hostname"
 				RESULT=$(wget -qO- https://api.org-dns.com/dyndns/?user=$USER\&key=$PASSWORD\&domain=$HOSTNAME)
-					;;
+				echo "[$(timestamp)]: $RESULT ($IP) ($HOSTNAME)" | tee -a /log/ddns.log
 			done < "/config/hostsList.txt"
 		else
 			RESULT="IP unchanged, not updated ($IP)"
+			echo "[$(timestamp)]: $RESULT" | tee -a /log/ddns.log
 		fi
 	fi
 
 	LASTIP="$IP"
-
-	echo "[$(timestamp)]: $RESULT"
 
 	if [ $INTERVAL -eq 0 ]
 	then

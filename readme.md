@@ -7,13 +7,41 @@ Dynamic DNS services have been around since the early days of the internet. Gene
 To build the Docker image, simply run Docker build
 
 ```
-docker build --no-cache --tag wircon-ddns .
+docker build --no-cache --tag wint-global-ddns .
 ```
+
+Before you run the container create ```hostsList.txt``` and ```ddns.log``` files in your config path.
+```
+touch /path/to/config/hostsList.txt /path/to/log/ddns.log
+```
+
+And add your hostnames. One per line!
+You can add/delete/edit hostnames everytime. They are being loaded every INTERVAL (see below for more info).
 
 To use the image, use Docker run.
 
 ```
-docker run -it --rm --name no-ip1 -e USER=username -e PASSWORD=yourpassword -e DETECTIP=1 -e INTERVAL=1 wint-global-ddns
+docker run -it --rm --name wint-global-ddns -e USER=yourusername -e PASSWORD=yourpassword -e DETECTIP=1 -e INTERVAL=1 -e TZ=Europe/Berlin -v /path/to/config/hostsList.txt:/config/hostsList.txt:ro -v /path/to/log/ddns.log:/log/ddns.log wint-global-ddns
+```
+
+Or use docker-compose.
+
+```
+version: "2"
+services:
+  wint-global-ddns:
+    image: wint-global-ddns
+    container_name: dyndns
+    environment:
+      - TZ=Europe/Berlin
+      - USER=yourusername
+      - PASSWORD=yourpassword
+      - DETECTIP=1
+      - INTERVAL=1
+    volumes:
+      - /path/to/config/hostsList.txt:/config/hostsList.txt:ro
+      - /path/to/log/ddns.log:/log/ddns.log
+    restart: unless-stopped
 ```
 
 The envitonmental variables are as follows:
@@ -27,3 +55,5 @@ The envitonmental variables are as follows:
 * **IP**: if DETECTIP is not set, you can specify an IP address.
 
 * **INTERVAL**: How often the script should call the update services in minutes.
+
+* **TZ**: Your Timezone. Lookup your Timezone at https://en.wikipedia.org/wiki/List_of_tz_database_time_zones . (not needed. You can add it if you want correct times in logs.)

@@ -44,7 +44,7 @@ services:
     restart: unless-stopped
 ```
 
-The envitonmental variables are as follows:
+The environment variables are as follows:
 
 * **USER**: the username for the service.
 

@@ -73,7 +73,7 @@ do
 					;;
 					
 				wircon)
-					RESULT=$(wget --no-check-certificate -qO- $USERAGENT https://api.org-dns.com/dyndns/?user=$USER\&key=$PASSWORD\&domain=$HOSTNAME)
+					RESULT=$(wget -qO- https://api.org-dns.com/dyndns/?user=$USER\&key=$PASSWORD\&domain=$HOSTNAME)
 					;;
 				*)
 					echo "Service not supported: '$SERVICE'."

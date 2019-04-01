@@ -12,15 +12,15 @@ then
 	exit 20
 fi
 
-if [ -z "$HOSTNAME" ]
+if [ ! -s "/config/hostsList.txt" ]
 then
-	echo "No host name. Use -h=host.example.com"
-	exit 30
+	echo "No host name. Paste hostnames to /config/hostsList.txt. One per line"
+	exit 40
 fi
 
 if [ -n "$DETECTIP" ]
 then
-	IP=$(wget -qO- "https://myexternalip.com/raw")
+	IP=$(wget -qO- "https://ip.d-pelz.de")
 fi
 
 if [ -n "$DETECTIP" ] && [ -z $IP ]
@@ -38,17 +38,13 @@ timestamp() {
 	date -u
 }
 
-USERAGENT="--user-agent=\"no-ip shell script/1.0 mail@mail.com\""
-BASE64AUTH=$(echo '"$USER:$PASSWORD"' | base64)
-AUTHHEADER="--header=\"Authorization: $BASE64AUTH\""
-
 LASTIP=""
 
 while :
 do
 	if [ -n "$DETECTIP" ]
 	then
-		IP=$(wget -qO- "http://myexternalip.com/raw")
+		IP=$(wget -qO- "https://ip.d-pelz.de")
 	fi
 
 	if [ -n "$DETECTIP" ] && [ -z $IP ]
@@ -56,30 +52,12 @@ do
 		RESULT="Could not detect external IP."
 	else
 		if [ "$LASTIP" != "$IP" ]; then
-			case "$SERVICE" in
-				dynu)
-					RESULT=$(wget --no-check-certificate -S -q https://api.dynu.com/nic/update?hostname=$HOSTNAME\&myip=$IP\&password=$PASSWORD | head -n1)
+			while read hostname
+			do
+				HOSTNAME="$hostname"
+				RESULT=$(wget -qO- https://api.org-dns.com/dyndns/?user=$USER\&key=$PASSWORD\&domain=$HOSTNAME)
 					;;
-
-				strato)
-					SERVICEURL="https://dyndns.strato.com/nic/update?hostname=$HOSTNAME\&myip=$IP"
-					echo "Updating ip on: $SERVICEURL"
-
-					RESULT=$(wget -S -nv -O "-" --http-user=$USER --http-password=$PASSWORD https://dyndns.strato.com/nic/update?hostname=$HOSTNAME&myip=$IP)
-					;;
-
-				duckdns)
-					RESULT=$(wget --no-check-certificate -qO- $USERAGENT https://www.duckdns.org/update?domains=$HOSTNAME\&token=$USER\&ip=$IP\&verbose=true)
-					;;
-					
-				wircon)
-					RESULT=$(wget -qO- https://api.org-dns.com/dyndns/?user=$USER\&key=$PASSWORD\&domain=$HOSTNAME)
-					;;
-				*)
-					echo "Service not supported: '$SERVICE'."
-					exit 101
-
-			esac
+			done < "/config/hostsList.txt"
 		else
 			RESULT="IP unchanged, not updated ($IP)"
 		fi

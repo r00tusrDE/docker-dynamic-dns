@@ -20,7 +20,7 @@ fi
 
 if [ -n "$DETECTIP" ]
 then
-	IP=$(wget -qO- "https://myexternalip.com/raw")
+	IP=$(wget -qO- "https://ip.d-pelz.de")
 fi
 
 if [ -n "$DETECTIP" ] && [ -z $IP ]
@@ -51,7 +51,7 @@ while :
 do
 	if [ -n "$DETECTIP" ]
 	then
-		IP=$(wget -qO- "https://myexternalip.com/raw")
+		IP=$(wget -qO- "https://ip.d-pelz.de")
 	fi
 
 	if [ -n "$DETECTIP" ] && [ -z $IP ]
